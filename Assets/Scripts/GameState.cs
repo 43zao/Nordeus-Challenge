@@ -122,6 +122,7 @@ public class GameState : MonoBehaviour
         Debug.Log("LEVEL UP! Now level " + level);
     }
 
+    /*
     public void ApplyStatUpgrade(string stat)
     {
         switch (stat)
@@ -148,7 +149,6 @@ public class GameState : MonoBehaviour
         Debug.Log("Upgraded: " + stat);
     }
 
-    /*
     public void TryLearnRandomMonsterMove(MonsterData monster)
     {
         List<MoveData> availableMoves = new List<MoveData>();

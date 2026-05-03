@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class LevelUpManager : MonoBehaviour
 {
@@ -38,10 +39,21 @@ public class LevelUpManager : MonoBehaviour
 
     void Choose(string stat)
     {
-        GameState.Instance.ApplyStatUpgrade(stat);
+        attackButton.interactable = false;
+        defenseButton.interactable = false;
+        magicButton.interactable = false;
+        hpButton.interactable = false;
 
-        panel.SetActive(false);
+        StartCoroutine(ApiClient.Instance.SendLevelUp(stat, (stats) =>
+        {
+            // update local state from server response
+            GameState.Instance.currentRun.hero.stats = stats;
 
-        SceneManager.LoadScene("LevelSelect");
+            GameState.Instance.levelUpPending = false;
+
+            panel.SetActive(false);
+
+            SceneManager.LoadScene("LevelSelect");
+        }));
     }
 }

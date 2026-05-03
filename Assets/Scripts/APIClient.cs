@@ -87,4 +87,40 @@ public class ApiClient : MonoBehaviour
             onSuccess?.Invoke(response);
         }
     }
+
+    public IEnumerator SendLevelUp(string stat, System.Action<StatsData> onSuccess)
+    {
+        string url = "http://127.0.0.1:5000/levelup";
+
+        var data = new
+        {
+            run_id = GameState.Instance.currentRun.run_id,
+            stat = stat
+        };
+
+        string json = JsonConvert.SerializeObject(data);
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(request.error);
+                yield break;
+            }
+
+            var stats = JsonConvert.DeserializeObject<StatsData>(
+                request.downloadHandler.text
+            );
+
+            onSuccess?.Invoke(stats);
+        }
+    }
 }

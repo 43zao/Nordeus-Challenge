@@ -42,15 +42,30 @@ public class MoveSelectorManager : MonoBehaviour
             GameObject obj = Instantiate(moveButtonPrefab, moveListContainer);
 
             TMP_Text text = obj.GetComponentInChildren<TMP_Text>();
+            Image icon = obj.GetComponentInChildren<Image>();
             text.text = move.name;
+            Sprite sprite = Resources.Load<Sprite>("Sprites/Moves/" + move.name);
+
+
+            if (icon != null)
+            {
+                icon.sprite = sprite;
+                icon.enabled = sprite != null;
+            }
 
             Button btn = obj.GetComponent<Button>();
+            bool alreadyEquipped =
+            GameState.Instance.equippedMoves.Contains(move);
+
+            btn.interactable = !alreadyEquipped;
+
+            MoveData capturedMove = move;
 
             btn.onClick.AddListener(() =>
             {
                 if (selectedSlot == -1) return;
 
-                EquipMove(selectedSlot, move);
+                EquipMove(selectedSlot, capturedMove);
             });
         }
     }
@@ -90,6 +105,34 @@ public class MoveSelectorManager : MonoBehaviour
 
             slotIcons[i].sprite = sprite;
             slotIcons[i].enabled = sprite != null;
+        }
+
+        RefreshMoveListAvailability();
+    }
+
+    void RefreshMoveListAvailability()
+{
+        foreach (Transform child in moveListContainer)
+        {
+            Button btn = child.GetComponent<Button>();
+            TMP_Text text = child.GetComponentInChildren<TMP_Text>();
+
+            if (text == null || btn == null) continue;
+
+            string moveName = text.text;
+
+            bool alreadyEquipped = false;
+
+            foreach (var m in GameState.Instance.equippedMoves)
+            {
+                if (m != null && m.name == moveName)
+                {
+                    alreadyEquipped = true;
+                    break;
+                }
+            }
+
+            btn.interactable = !alreadyEquipped;
         }
     }
 }

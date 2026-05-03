@@ -7,8 +7,8 @@ using System.Collections.Generic;
 
 public class BattleManager : MonoBehaviour
 {
-    public SpriteRenderer playerSprite;
-    public SpriteRenderer monsterSprite;
+    public Image playerSprite;
+    public Image monsterSprite;
 
     public Slider playerHpBar;
     public Slider monsterHpBar;
@@ -40,11 +40,12 @@ public class BattleManager : MonoBehaviour
     private int currentSelectedMoveIndex;
 
     private Queue<string> logQueue = new Queue<string>();
-    private const int MAX_LOG_LINES = 20;
+    private const int MAX_LOG_LINES = 12;
 
     void Start()
     {
         hero = GameState.Instance.currentRun.hero;
+
         monster = GameState.Instance.GetSelectedMonster();
 
         currentPlayerHP = hero.stats.hp;
@@ -64,8 +65,52 @@ public class BattleManager : MonoBehaviour
     void SetupBattle()
     {
         // sprites
-        playerSprite.sprite = Resources.Load<Sprite>("Sprites/Knight");
-        monsterSprite.sprite = Resources.Load<Sprite>("Sprites/" + monster.name);
+        Sprite[] rogueSprites =
+            Resources.LoadAll<Sprite>("Sprites/Characters/rogues");
+
+        if (rogueSprites.Length > 1)
+        {
+            playerSprite.sprite = rogueSprites[1];  // rogues_1
+        }
+        else
+        {
+            Debug.LogError("Rogue sprite sheet missing or not sliced correctly!");
+        }
+
+        Sprite[] monsterSprites =
+            Resources.LoadAll<Sprite>("Sprites/Characters/monsters");
+
+        Sprite monsterSpriteFinal = null;
+
+        switch (monster.name)
+        {
+            case "Witch":
+                monsterSpriteFinal = monsterSprites.Length > 30 ? monsterSprites[30] : null;
+                break;
+
+            case "Giant Spider":
+                monsterSpriteFinal = monsterSprites.Length > 39 ? monsterSprites[39] : null;
+                break;
+
+            case "Dragon":
+                monsterSpriteFinal = monsterSprites.Length > 45 ? monsterSprites[45] : null;
+                break;
+
+            case "Goblin Warrior":
+                monsterSpriteFinal = monsterSprites.Length > 2 ? monsterSprites[2] : null;
+                break;
+
+            case "Goblin Mage":
+                monsterSpriteFinal = monsterSprites.Length > 1 ? monsterSprites[1] : null;
+                break;
+        }
+
+        monsterSprite.sprite = monsterSpriteFinal;
+
+        if (monsterSpriteFinal == null)
+        {
+            Debug.LogError("Missing monster sprite for: " + monster.name);
+        }
 
         // hp bars
         playerHpBar.maxValue = hero.stats.hp;
@@ -85,6 +130,22 @@ public class BattleManager : MonoBehaviour
             int moveIndex = i;
 
             playerMoveTexts[i].text = equippedMoves[i].name;
+
+            Image icon = playerMoveButtons[i].transform.Find("Icon").GetComponent<Image>();
+
+            Sprite sprite =
+                Resources.Load<Sprite>("Sprites/Moves/" + equippedMoves[i].name);
+
+            if (sprite != null)
+            {
+                icon.sprite = sprite;
+                icon.enabled = true;
+            }
+            else
+            {
+                icon.enabled = false;
+                Debug.LogWarning("Missing move icon: " + equippedMoves[i].name);
+            }
 
             playerMoveButtons[i].onClick.AddListener(() =>
             {
