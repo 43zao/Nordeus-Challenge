@@ -5,6 +5,7 @@
 Launch a terminal inside the SERVER folder and type:
 
 pip install flask flask-cors
+
 python server.py
 
 ## Frontend
