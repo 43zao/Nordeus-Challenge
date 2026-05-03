@@ -70,7 +70,7 @@ public class BattleManager : MonoBehaviour
 
         if (rogueSprites.Length > 1)
         {
-            playerSprite.sprite = rogueSprites[1];  // rogues_1
+            playerSprite.sprite = rogueSprites[1];
         }
         else
         {
@@ -229,7 +229,7 @@ public class BattleManager : MonoBehaviour
 
         UpdateStatsUI();
 
-        // LOGGING
+        // logging
         AppendLog($"\n- TURN {turnNumber} -");
         AppendLog(" ");
 
@@ -239,22 +239,23 @@ public class BattleManager : MonoBehaviour
             GameState.Instance.equippedMoves[currentSelectedMoveIndex].name
         );
 
-        bool monsterActionStarted = false;
+        var playerMove =
+            GameState.Instance.equippedMoves[currentSelectedMoveIndex];
 
-        foreach (var log in response.log)
+        int playerEffectCount = playerMove.effects.Count;
+
+        for (int i = 0; i < response.log.Count; i++)
         {
-            // first log targeting hero means monster phase started
-            if (!monsterActionStarted &&
-                (log.target == "Knight" || log.caster == monster.name))
+            // once all player effects are printed,
+            // everything after belongs to monster
+            if (i == playerEffectCount)
             {
                 AppendLog(" ");
                 AppendLog("MONSTER TURN:");
                 AppendLog(monster.name + " used " + response.monster_move);
-
-                monsterActionStarted = true;
             }
 
-            AppendLog(FormatLog(log));
+            AppendLog(FormatLog(response.log[i]));
         }
 
         if (response.battle_over)

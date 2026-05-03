@@ -49,7 +49,8 @@ public class ApiClient : MonoBehaviour
             run_id = GameState.Instance.currentRun.run_id,
             monster_index = GameState.Instance.selectedMonsterIndex,
             player_move_index = playerMoveIndex,
-            known_moves = GameState.Instance.knownMoves.ConvertAll(m => m.name)
+            known_moves = GameState.Instance.knownMoves.ConvertAll(m => m.name),
+            equipped_moves = GameState.Instance.equippedMoves.ConvertAll(m => m.name)
         };
 
         string json = JsonConvert.SerializeObject(requestData);

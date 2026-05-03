@@ -37,11 +37,12 @@ public class LevelSelectManager : MonoBehaviour
             // text setup
             text.text = $"Level {i + 1} - {monsters[i].name}";
 
+            /*
             if (beaten)
             {
-                // text.text += " - CLEARED";
+                text.text += " - CLEARED";
             }
-
+            */
 
             // lock logic
             if (!unlocked)
@@ -74,8 +75,4 @@ public class LevelSelectManager : MonoBehaviour
         SceneManager.LoadScene("Battle");
     }
 
-    public void StartLevelUpUI()
-    {
-        
-    }
 }

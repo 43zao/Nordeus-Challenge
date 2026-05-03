@@ -52,7 +52,6 @@ public class MoveLoadoutManager : MonoBehaviour
         }
     }
 
-    // optional: call when you update loadout after learning new move
     public void Refresh()
     {
         SetupLoadout();

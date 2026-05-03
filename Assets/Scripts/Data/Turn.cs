@@ -7,6 +7,7 @@ public class TurnRequest
     public int monster_index;
     public int player_move_index;
     public List<string> known_moves;
+    public List<string> equipped_moves;
 }
 
 [System.Serializable]
